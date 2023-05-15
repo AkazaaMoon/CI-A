@@ -1,52 +1,38 @@
 env:
+    # ENCRYPTED
+    RCLONECONFIG_DRIVE: "ENCRYPTED[3478b65debd3a399ecf002d43ba5b65d4ff0a82117aa4e6213b8f0c8af3d74d9315e273c73d96e7c95d89f4f032a31a0]"
+    TG_TOKEN: "ENCRYPTED[9073cc350c37673c75d40c8be68acc7a727dc2533fe65460fa19b0a251a9bff80be8f955a302f403c19f3ea5cddbf8c5]"
+    TG_CHAT_ID: "ENCRYPTED[361d9dd880351292dc15dd8a4a1a77517659e52cf28a144a20e0098f0d988b20880a1bf0afb80fda381824833991455c]"
+    CREDENTIALS: "ENCRYPTED[7996915c3ebfce4e3ef0453809e411b56bc3106028d2461f7eeb4a74aa006011e028131cc7ffce5f83fa9da165372795]"
+    USER: "ENCRYPTED[a6238e0f53a5db8eb318dd50633e8f6e429451f7eeebf8335e15f128ebb6d0d02cae7f57da84d31a8f1f773d94828afc]"
+    EMAIL: "ENCRYPTED[5aeb0e6adea70469b94d6dcac16444f6daf35d90350ffb14f1a23e377b25115aaff9676670f60746e07644a2e34399e9]"
+    KBUILD_BUILD_USER: "ENCRYPTED[17230cbbf5d84f8204090d3a92172e5a707a2fcb702201ed7cc5a7a3ca1d44b0cb49144eec7f44bee49989073ec78bfe]"
+    KBUILD_BUILD_HOST: "ENCRYPTED[475d64a387095f936e8bdd3e3e82ecdb05021ce714a1cf8100595e68efe3b8abe5e446baf14285028257aa7d90a7e048]"
 
-# ENCRYPTED
-  RCLONECONFIG_DRIVE: "ENCRYPTED[3478b65debd3a399ecf002d43ba5b65d4ff0a82117aa4e6213b8f0c8af3d74d9315e273c73d96e7c95d89f4f032a31a0]"
-  TG_TOKEN: "ENCRYPTED[9073cc350c37673c75d40c8be68acc7a727dc2533fe65460fa19b0a251a9bff80be8f955a302f403c19f3ea5cddbf8c5]"
-  TG_CHAT_ID: "ENCRYPTED[361d9dd880351292dc15dd8a4a1a77517659e52cf28a144a20e0098f0d988b20880a1bf0afb80fda381824833991455c]"
-  CREDENTIALS: "ENCRYPTED[7996915c3ebfce4e3ef0453809e411b56bc3106028d2461f7eeb4a74aa006011e028131cc7ffce5f83fa9da165372795]"
-  USER: "ENCRYPTED[a6238e0f53a5db8eb318dd50633e8f6e429451f7eeebf8335e15f128ebb6d0d02cae7f57da84d31a8f1f773d94828afc]"
-  EMAIL: "ENCRYPTED[5aeb0e6adea70469b94d6dcac16444f6daf35d90350ffb14f1a23e377b25115aaff9676670f60746e07644a2e34399e9]"
-  KBUILD_BUILD_USER: "ENCRYPTED[17230cbbf5d84f8204090d3a92172e5a707a2fcb702201ed7cc5a7a3ca1d44b0cb49144eec7f44bee49989073ec78bfe]"
-  KBUILD_BUILD_HOST: "ENCRYPTED[475d64a387095f936e8bdd3e3e82ecdb05021ce714a1cf8100595e68efe3b8abe5e446baf14285028257aa7d90a7e048]"
-  
-# FLAG
-  WORKDIR: "/tmp"
-  CIRRUS_CLONE_DEPTH: "1"
+
+    # Config
+    CONFIG: config.sh
+
+    # Cirrus Specific Vars (Do *NOT* Change)
+    CIRRUS_SHELL: bash
 
 task:
-  name: "Setting Up, Syncing, Building and Uploading"
-  only_if: $CIRRUS_REPO_OWNER == 'mobxprjkt'
+  name: "TWRP CI"
   timeout_in: 120m
   container:
-    image: c3eru/gaspoll:22.04
-    cpu: 8
-    memory: 32G
+      image: ghcr.io/sushrut1101/docker:latest
+      cpu: 8
+      memory: 20G
+      
+  Checks_script:
+      - curl -sL https://raw.githubusercontent.com/mobxprjkt/CI-A/twrp/scripts/checks.sh | bash
 
-  Memuat-ccache_background_script:
-     - ./memuat_ccache.sh
-     
-  Repo-pribadi_script:
-     - git config --global user.name "c3eru"
-     - git config --global user.email "yyprjkt@gmail.com"
-     - echo "$CREDENTIALS" > ~/.git-credentials
-     - git config --global credential.helper store --file=~/.git-credentials
-     - export KBUILD_BUILD_USER=$KBUILD_BUILD_USER
-     - export KBUILD_BUILD_HOST=$KBUILD_BUILD_USER
-     - export BUILD_USERNAME=$KBUILD_BUILD_USER
-     - export BUILD_HOSTNAME=$KBUILD_BUILD_USER
+  Sync_script:
+      - curl -sL https://raw.githubusercontent.com/mobxprjkt/CI-A/twrp/scripts/sync.sh | bash
 
+  Build_script:
+      - curl -sL https://raw.githubusercontent.com/mobxprjkt/CI-A/twrp/scripts/build.sh | bash
 
-  Sinkronisasi_script:
-     - ./sinkronisasi.sh
-     
-  Build-rom_script:
-     - ./membangun.sh
-     
-  Ccache-info_script:
-     - set -e
-     - export CCACHE_DIR=$WORKDIR/ccache
-     - ccache -s
-
-  Upload-build_script:
-     - ./mengemas.sh
+  Upload_script:
+      - export TIMEOUT=43200 # Link timeout (in minutes)
+      - curl -sL https://raw.githubusercontent.com/mobxprjkt/CI-A/twrp/scripts/upload.sh | bash
