@@ -16,11 +16,11 @@ telegram_message() {
 
 # Clone the Sync Repo
 cd $SYNC_PATH
-repo init $TWRP_MANIFEST -b $TWRP_BRANCH --depth=1
+repo init https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp -b twrp-12.1 --depth=1
 repo sync
 
 # Clone Trees
-git clone $DT_LINK $DT_PATH || { echo "ERROR: Failed to Clone the Device Trees!" && exit 1; }
+git clone https://github.com/c3eru/device_xiaomi_topaz_TWRP || { echo "ERROR: Failed to Clone the Device Trees!" && exit 1; }
 
 # Clone the Kernel Sources
 # only if the Kernel Source is Specified in the Config
