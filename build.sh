@@ -1,6 +1,6 @@
 #sync rom
-repo init --depth=1 --no-repo-verify -u https://github.com/AOSPA/manifest -b topaz -g default,-mips,-darwin,-notdefault
-git clone --depth 1 https://github.com/c3eru/local_manifest -b c3eru-patch-2 .repo/local_manifests
+repo init --depth=1 --no-repo-verify -u https://github.com/PixelExperience/manifest -b thirteen-plus -g default,-mips,-darwin,-notdefault
+git clone --depth 1 https://github.com/AkazaaMoon/local_manifests -b main .repo/local_manifests
 repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j8
 
 # build rom
@@ -13,12 +13,12 @@ export KBUILD_BUILD_USER=$KBUILD_BUILD_USER
 export KBUILD_BUILD_HOST=$KBUILD_BUILD_HOST
 export BUILD_USERNAME=$KBUILD_BUILD_USER
 export BUILD_HOSTNAME=$KBUILD_BUILD_HOST
-lunch aospa_citrus-userdebug
+lunch aosp_citrus-userdebug
 mkfifo reading
 tee "${BUILDLOG}" < reading &
 build_message "Building Started"
 progress &
-./rom-build.sh citrus -t userdebug -j8  > reading
+mka bacon -j8  > reading
 
 retVal=$?
 timeEnd
